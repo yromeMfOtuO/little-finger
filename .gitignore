@@ -3,3 +3,4 @@ venv
 build
 dist
 little_finger.egg-info
+.idea 2

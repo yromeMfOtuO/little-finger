@@ -13,10 +13,12 @@ class LogReader:
     def read_log_from_json(log_path='log.json',
                            filter_method=lambda x: x,
                            reg_method=lambda x: x,
-                           convert_method=lambda x: x):
+                           single_convert_method=lambda x: x,
+                           total_convert_method=lambda x: x):
         """
         这里的取值 key 与kibana 的日志格式有关，日志格式不同则不适用
-        :param convert_method: 转换方法 例如 json.loads()
+        :param total_convert_method: 整体数据转换方法
+        :param single_convert_method: 单条数据转换方法 例如 json.loads()
         :param log_path: 日志 json 文件路径
         :param filter_method: 日志过滤方法，用于过滤在 kibana 中不方便过滤的日志
         :param reg_method: 日志截取匹配方法，用于在日志中截取或者匹配到需要的 数据 json
@@ -31,8 +33,8 @@ class LogReader:
             logs = list(filter(filter_method, hits_))
             log_sources = list(map(lambda x: x['_source']['log'], logs))
             # 日志内容匹配
-            data = list(map(convert_method, map(reg_method, log_sources)))
-            return data
+            data = list(map(single_convert_method, map(reg_method, log_sources)))
+            return total_convert_method(data)
 
     @staticmethod
     def filter_method_by_contains(content: str):
