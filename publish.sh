@@ -2,6 +2,7 @@
 
 # 清理构建目录
 rm -rf ./dist/
+rm -rf ./build/
 rm -rf ./little_finger.egg-info/
 
 # 构建

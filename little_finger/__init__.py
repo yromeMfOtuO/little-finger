@@ -1,1 +1,3 @@
-__author__ = 'weihao.lv'
+"""
+little finger tool
+"""

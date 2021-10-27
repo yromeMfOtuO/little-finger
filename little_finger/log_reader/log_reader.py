@@ -1,4 +1,6 @@
-__author__ = 'weihao.lv'
+"""
+日志读取相关，主要用于从日志中提取返回字符串
+"""
 
 import json
 import re
@@ -38,18 +40,36 @@ class LogReader:
 
     @staticmethod
     def filter_method_by_contains(content: str):
+        """
+        通过包含关系过滤，结果必须包含 给出的字符串
+
+        :param content: 被包含的字符串
+        :return: 筛选 lambda 参数
+        """
         return lambda x: x['_source']['log'].__contains__(content)
 
     @staticmethod
     def reg_method_by_split(splitter: str, index: int):
+        """
+        根据切分内容进行字符串内容转换
+
+        :param splitter: 用于切分的子串
+        :param index: 切分后目标内容在 list 中的索引
+        :return: 转换后的字符串
+        """
         return lambda x: x.split(splitter)[index]
 
     @staticmethod
     def reg_method_by_regex(regex: str, index: int):
-        return lambda x: re.findall(regex, x.replace('\n', '').replace(' ', '').replace('\t', ''), 0)[index]
+        """
+        通过正则匹配进行字符串内容转换
 
-
-
-
-
-
+        :param regex: 正则表达式, 例：'body:(.*?),protocol' 匹配 body: 和 ,protocol 之间的内容
+        :param index: 目标子串在正则匹配结果 list 中的索引
+        :return: 转换后的字符串
+        """
+        return lambda x: re.findall(
+            regex,
+            # 替换空白字符
+            x.replace('\n', '').replace(' ', '').replace('\t', ''), 0
+        )[index]

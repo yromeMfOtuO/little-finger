@@ -1,5 +1,5 @@
-__author__ = 'weihao.lv'
-
+# pylint: skip-file
+# pylint 忽略文件
 from setuptools import setup, find_packages
 
 
@@ -17,7 +17,7 @@ def requirements():
 
 setup(
     name='little-finger',
-    version='0.0.10',  # 版本号
+    version='0.0.13',  # 版本号
     description='tool pkg.',  # 包的介绍
     author='yromeMfOtuO',  # 作者 就是我啦～
     author_email='weihao.lv@outlook.com',  # 你的邮箱
@@ -36,4 +36,3 @@ setup(
     # 其他依赖的约束
     install_requires=requirements()
 )
-

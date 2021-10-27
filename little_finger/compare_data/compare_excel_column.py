@@ -1,58 +1,22 @@
-import json
+"""
+用于从 csv excel 日志等中提取数据，并根据指定的 key 列 对指定的 value 列进行比较，打印比较结果
+"""
 
-import pandas as pd
+import json
+from typing import List
 
 from little_finger.utils.list_util import flatten
+from little_finger.utils.list_util import convert_list_2_dict
+from little_finger.utils.data_util import convert_csv_list
+from little_finger.utils.data_util import covert_excel_list
 from little_finger.log_reader import LogReader
 
 
-def convert_data_file_2_list(path, read_method):
-    df = read_method(path)
-    df_list = []
-    for i in df.index.values:
-        # loc为按列名索引 iloc 为按位置索引，使用的是 [[行号], [列名]]
-        df_line = df.loc[i].to_dict()
-        # 将每一行转换成字典后添加到列表
-        df_list.append(df_line)
-    return df_list
-
-
-def covert_excel_list(path):
-    """
-    pandas 读取 excel 内容转换为 List
-    :param path:
-    :return:
-    """
-    return convert_data_file_2_list(path, pd.read_excel)
-
-
-def convert_csv_list(path):
-    """
-    pandas 读取 csv 内容转换为 list
-    :param path:
-    :return:
-    """
-    return convert_data_file_2_list(path, pd.read_csv)
-
-
-def convert_list_2_dict(data, key_column):
-    """
-    List 转换成 dict
-    :param data:
-    :param key_column:
-    :return:
-    """
-    result = {}
-    for i in data:
-        result[str(i[key_column])] = i
-    return result
-
-
-def convert_dict(path, key_column):
+def convert_dict(path, key_column) -> dict:
     """
     读取数据并转换为 dict
-    :param path:
-    :param key_column:
+    :param path: 数据文件 path
+    :param key_column: 作为key的列名
     :return:
     """
     data = {}
@@ -71,7 +35,15 @@ def convert_dict(path, key_column):
     return convert_list_2_dict(data, key_column)
 
 
-def compare_raw(key, left_raw, right_raw, compare_column):
+def compare_raw(key, left_raw, right_raw, compare_column) -> None:
+    """
+    比较单条数据
+    :param key: key 列名
+    :param left_raw: 单条数据
+    :param right_raw: 单条数据
+    :param compare_column: 需要比较的列名
+    :return: None
+    """
     # print("--------------------------------------")
     for t in compare_column:
         left_val = left_raw[t[0]]
@@ -82,7 +54,14 @@ def compare_raw(key, left_raw, right_raw, compare_column):
             print(f"数据一致, key = {key}, left = {left_val}, right = {right_val}")
 
 
-def compare_data(left_dict, right_dict, relate_column, compare_column):
+def compare_data(left_dict, right_dict, compare_column) -> None:
+    """
+    比较一组数据
+    :param left_dict: key -> datum
+    :param right_dict: key -> datum
+    :param compare_column: 需要比较的列名
+    :return: None
+    """
     print("以左边为准比较是否一致")
     for key, left_raw in left_dict.items():
         if key not in right_dict:
@@ -98,14 +77,21 @@ def compare_data(left_dict, right_dict, relate_column, compare_column):
     ...
 
 
-def compare(left_path, right_path, relate_column, compare_column):
+def compare(left_path: str, right_path: str, relate_column: List[str], compare_column: str) -> None:
+    """
+    比较数据
+    :param left_path: 数据文件路径
+    :param right_path: 数据文件路径
+    :param relate_column: 关联的列 key 列名列表
+    :param compare_column: 需要比较的列名
+    :return: None
+    """
     # left_dict = convert_map(left_path, map(lambda x: x[0], relate_column))
     # right_dict = convert_map(right_path, map(lambda x: x[0], relate_column))
     left_dict = convert_dict(left_path, relate_column[0])
     right_dict = convert_dict(right_path, relate_column[1])
 
-    compare_data(left_dict, right_dict, relate_column, compare_column)
-    ...
+    compare_data(left_dict, right_dict, compare_column)
 
 
 if __name__ == '__main__':
@@ -120,5 +106,4 @@ if __name__ == '__main__':
     #     LogReader.reg_method_by_split('收到西药服务推送的消息，但是渠道不是企杏大药房下渠道，message: ', 1),
     #     json.loads
     # )
-
     ...
