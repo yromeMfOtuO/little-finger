@@ -1,9 +1,13 @@
-# setup.py 修改版本
+# TIPS：setup.py 修改版本
+
+function clean_build() {
+    rm -rf ./dist/
+    rm -rf ./build/
+    rm -rf ./little_finger.egg-info/
+}
 
 # 清理构建目录
-rm -rf ./dist/
-rm -rf ./build/
-rm -rf ./little_finger.egg-info/
+clean_build
 
 # 构建
 python3 setup.py sdist bdist_wheel
