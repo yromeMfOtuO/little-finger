@@ -33,7 +33,7 @@ def convert_data_file_2_list(path: str, read_method, sheet_name=None, fill_merge
     :param fill_merged_cell: 是否填充合并的单元格，默认需要
     :return: 数据列表 list[dict]
     """
-    if read_method == pd.read_excel and sheet_name:
+    if sheet_name and read_method == pd.read_excel:
         df = read_method(path, sheet_name=sheet_name)
     else:
         df = read_method(path)
