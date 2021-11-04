@@ -4,6 +4,7 @@
 
 from operator import itemgetter
 from itertools import groupby
+from collections import OrderedDict
 
 from typing import Dict
 
@@ -57,6 +58,22 @@ def group_by(data: list, key_column: str) -> Dict[object, list]:
     return {key: list(group) for key, group in lgb}
 
 
+def distinct_by(data: list, key_column: str) -> list:
+    """
+    根据某一列去重, 保持原有数据顺序
+    :param data: 数据列表
+    :param key_column: 用于去重的列名
+    :return: 去重后的列表
+    """
+    getter = itemgetter(key_column)
+    od = OrderedDict()
+    for i in data:
+        key = getter(i)
+        if key not in od:
+            od.setdefault(key, i)
+    return list(od.values())
+
+
 if __name__ == '__main__':
-    d = {"name": "weihao.lv", "age": 1}
-    print(itemgetter("name")(d))
+    print(distinct_by([{"name": 2, "age": 3}, {"name": 2, "age": 2}, {"name": 1, "age": 2}], "name"))
+    ...
