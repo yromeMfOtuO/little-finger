@@ -1,3 +1,7 @@
+"""
+通过邮件发送通知
+"""
+
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
