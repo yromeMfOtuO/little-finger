@@ -12,6 +12,8 @@ class IftttClient:
     ifttt 请求封装 client
     """
 
+    host = "https://maker.ifttt.com"
+
     def __init__(self, config):
         """
         初始化，通过 event 和 key 绑定一个唯一的 action trigger
@@ -26,7 +28,7 @@ class IftttClient:
         发送通知：
             请求 trigger 接口 -> 获取 action -> 发送对应 app 账户通知
         """
-        url_ = f"https://maker.ifttt.com/trigger/{self.event}/with/key/{self.key}"
+        url_ = f"{IftttClient.host}/trigger/{self.event}/with/key/{self.key}"
         headers_ = {
             'Content-Type': 'application/json'
         }
