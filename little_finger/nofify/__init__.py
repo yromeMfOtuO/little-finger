@@ -3,3 +3,4 @@
 """
 from .email_client import EmailClient
 from .ifttt_client import IftttClient
+from .wecom_client import WecomClient
