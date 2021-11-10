@@ -9,7 +9,28 @@
 """
 import json
 
+from typing import List
 import requests
+
+
+class WecomConfig:
+    """
+    企微配置类
+    """
+
+    class WecomAppConfig:
+        """
+        企微应用配置类
+        """
+
+        def __init__(self, app_id: int, app_secret: str):
+            self.app_id = app_id
+            self.app_secret = app_secret
+            self.access_token = None
+
+    def __init__(self, corp_id: str, apps: List[WecomAppConfig]):
+        self.corp_id = corp_id
+        self.apps = apps
 
 
 class WecomClient:
@@ -21,28 +42,46 @@ class WecomClient:
 
     bpath = f"{host}/cgi-bin"
 
-    def __init__(self, config: dict):
+    def __init__(self, config: WecomConfig):
         if config is None:
             raise Exception('获取企微配置失败')
-        self.corp_id = config['corpid']
-        self.corp_secret = config['corpsecret']
-        self.access_token = self.get_token()
+        self.config = config
+        self.app_index = {app.app_id: app for app in config.apps}
+        self.refresh_token()
 
-    def get_token(self):
+    def get_corp_id(self) -> str:
         """
-        获取 access_token，作为后续接口请求的凭证
+        获取企业 id
+        :return: corp_id
+        """
+        return self.config.corp_id
+
+    def get_access_token(self, app_id: int):
+        """
+        根据应用 id 获取对应 access_token
+        :param app_id: 应用 id
         :return: access_token
         """
-        resp = requests.get(
-            f"{WecomClient.bpath}/gettoken",
-            params=[
-                ("corpid", self.corp_id),
-                ("corpsecret", self.corp_secret)
-            ]
-        )
-        return resp.json()['access_token']
+        if app_id not in self.app_index:
+            raise Exception("非法应用id")
+        return self.app_index.get(app_id).access_token
 
-    def send(self, user_id, app_id, content):
+    def refresh_token(self):
+        """
+        获取 应用access_token，作为后续接口请求的凭证
+        :return: None
+        """
+        for app in self.config.apps:
+            resp = requests.get(
+                f"{WecomClient.bpath}/gettoken",
+                params=[
+                    ("corpid", self.get_corp_id()),
+                    ("corpsecret", app.app_secret)
+                ]
+            )
+            app.access_token = resp.json()['access_token']
+
+    def send(self, user_id: str, app_id: int, content: str):
         """
         发送消息，暂时只支持文本
         :param user_id: 企微中的 成员id
@@ -62,7 +101,7 @@ class WecomClient:
         resp = requests.post(
             f'{WecomClient.bpath}/message/send',
             params=[
-                ('access_token', self.access_token)
+                ("access_token", self.get_access_token(app_id))
             ],
             data=json.dumps(data)
         )
@@ -70,9 +109,15 @@ class WecomClient:
 
 
 if __name__ == '__main__':
-    config_ = {
-        "corpid": '<>',
-        "corpsecret": '<>'
-    }
+    config_ = WecomConfig(
+        'corp_id',
+        [
+            WecomConfig.WecomAppConfig(
+                1000002,
+                'app_secret'
+            )
+        ]
+    )
+
     client = WecomClient(config_)
-    client.send('userid', 1000002, 'wecom client test')
+    client.send('user_id', 1000002, 'multi app client test')
