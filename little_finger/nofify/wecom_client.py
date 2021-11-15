@@ -2,10 +2,15 @@
 通过企微实现微信通知，
 
 需要注册企微企业获取企业id，创建应用获取应用 id 和 secret，
-通过企业 id 和 应用secret 获取 access_token，tips: access_token 是应用维度而不是企业维度
+通过企业 id 和 应用secret 获取 access_token，
 通过 access_token 和 应用id 请求企微开放 api，
 
 微信绑定企微后消息可以同步发送至企微和微信
+
+TIPS:
+    1. access_token 是应用维度而不是企业维度
+    2. 注意部分消息类型不支持在微信上查看
+    3. 图片 音频 视频 文件 等媒体消息，需要先 上传临时素材 再使用 素材id 作为消息参数发送
 """
 import json
 
