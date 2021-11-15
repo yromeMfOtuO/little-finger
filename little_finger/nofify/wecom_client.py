@@ -81,22 +81,65 @@ class WecomClient:
             )
             app.access_token = resp.json()['access_token']
 
-    def send(self, user_id: str, app_id: int, content: str):
+    def send(self, app_id: int, user_ids: List[str], content: str,
+             part_ids: List[str] = None, tag_ids: List[str] = None):
         """
-        发送消息，暂时只支持文本
-        :param user_id: 企微中的 成员id
+        发送文本消息
+        :param user_ids: 企微中的 成员id 列表
         :param app_id: 发送消息的 应用id
         :param content: 发送的文本消息内容
+        :param part_ids: 部门 id 列表
+        :param tag_ids: 标签 id 列表
         :return: none
         """
         data = {
-            "touser": user_id,
+            # 接受消息用户列表，为”@all”标示所有人
+            "touser": "|".join(user_ids),
+            # 部门ID列表，多个接收者用‘|’分隔，最多支持100个，当touser为”@all”时忽略
+            "toparty": "|".join(part_ids) if part_ids else None,
+            # 标签ID列表，多个接收者用‘|’分隔，最多支持100个，当touser为”@all”时忽略
+            "totag": "|".join(tag_ids) if tag_ids else None,
             "msgtype": "text",
             "agentid": app_id,
             "text": {
                 "content": content
             },
             "safe": 0
+        }
+        resp = requests.post(
+            f'{WecomClient.bpath}/message/send',
+            params=[
+                ("access_token", self.get_access_token(app_id))
+            ],
+            data=json.dumps(data)
+        )
+        print(resp.json())
+
+    def send_md(self, app_id: int, user_ids: List[str], content: str,
+                part_ids: List[str] = None, tag_ids: List[str] = None):
+        """
+        发送文本消息
+        :param user_ids: 企微中的 成员id 列表
+        :param app_id: 发送消息的 应用id
+        :param content: 发送的文本消息内容
+        :param part_ids: 部门 id 列表
+        :param tag_ids: 标签 id 列表
+        :return: none
+        """
+        data = {
+            # 接受消息用户列表，为”@all”标示所有人
+            "touser": "|".join(user_ids),
+            # 部门ID列表，多个接收者用‘|’分隔，最多支持100个，当touser为”@all”时忽略
+            "toparty": "|".join(part_ids) if part_ids else None,
+            # 标签ID列表，多个接收者用‘|’分隔，最多支持100个，当touser为”@all”时忽略
+            "totag": "|".join(tag_ids) if tag_ids else None,
+            "msgtype": "markdown",
+            "agentid": app_id,
+            "markdown": {
+                "content": content
+            },
+            "enable_duplicate_check": 1,  # 标示开启重复消息检查
+            "duplicate_check_interval": 1800  # 标示在时间间隔内不会收到重复消息
         }
         resp = requests.post(
             f'{WecomClient.bpath}/message/send',
