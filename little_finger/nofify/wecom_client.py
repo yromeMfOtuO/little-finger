@@ -50,6 +50,19 @@ class MediaType(enum.Enum):
     FILE = ('file',)
 
 
+class Article:
+    """文章"""
+    def __init__(self, title: str, desc: str, pic_url: str, url: str,
+                 app_id: str = None, page_path: str = None):
+        self.title = title  # 文章标题
+        self.description = desc # 文章描述，副标题，TIPS：一次发送多篇文章时不展示
+        self.picurl = pic_url   # 文章头图链接，可以使用企微文件上传接口获取，也可来自外部
+        self.url = url  # 文章跳转 url
+        self.appid = app_id # 文章跳转 appid，TIPS：当前企微应用未绑定则不填，否则企微校验不通过
+        self.pagepath = page_path   # 文章跳转 app pagepath，TIPS：当前企微应用未绑定则不填，否则企微校验不通过
+        ...
+
+
 class WecomClient:
     """
     企微 api 客户端
@@ -105,7 +118,7 @@ class WecomClient:
             params=[
                 ("access_token", self.get_access_token(app_id))
             ],
-            data=json.dumps(data)
+            data=json.dumps(data, default=lambda obj: obj.__dict__)
         )
         print(resp.json())
 
@@ -292,6 +305,51 @@ class WecomClient:
             "duplicate_check_interval": 1800
         }
 
+        client.send(1000002, data)
+
+    def send_articles(self, app_id: int, user_ids: List[str], articles: List[Article],
+                      part_ids: List[str] = None, tag_ids: List[str] = None):
+        """
+        发送图文文章消息，示例：
+        client.send_articles(
+            1000002,
+            ['weihao.lv'],
+            [
+                Article(
+                    "触发续方通知推送",
+                    "触发续方通知推送.png",
+                    "https://i.loli.net/2021/08/31/3GawtLKV2XMNzgx.png",
+                    "https://sm.ms/image/3GawtLKV2XMNzgx"
+                ),
+                Article(
+                    "推送策略类图v2",
+                    "推送策略类图v2.png",
+                    "https://i.loli.net/2021/08/31/42e81J6oEN7CZ39.png",
+                    "https://sm.ms/image/42e81J6oEN7CZ39"
+                )
+            ]
+        )
+
+        :param app_id: 发送消息的 应用id
+        :param user_ids: 企微中的 成员id 列表
+        :param articles: 文章列表
+        :param part_ids: 部门 id 列表
+        :param tag_ids: 标签 id 列表
+        :return: none
+        """
+        data = {
+            "touser": "|".join(user_ids),
+            "toparty": "|".join(part_ids) if part_ids else None,
+            "totag": "|".join(tag_ids) if tag_ids else None,
+            "msgtype": "news",
+            "agentid": app_id,
+            "news": {
+                "articles": articles
+            },
+            "enable_id_trans": 0,
+            "enable_duplicate_check": 0,
+            "duplicate_check_interval": 1800
+        }
         client.send(1000002, data)
 
 
