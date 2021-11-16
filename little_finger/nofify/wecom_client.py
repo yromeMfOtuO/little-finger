@@ -203,7 +203,7 @@ class WecomClient:
         self.send(app_id, data)
 
     def send_media(self, app_id: int, user_ids: List[str],
-                   media_type: MediaType, media_path: str, media_name: str,
+                   media_type: MediaType, media_path: str, media_name: str, title: str = None, desc: str = None,
                    part_ids: List[str] = None, tag_ids: List[str] = None):
         """
         发送媒体消息：1.上传临时素材获取素材 id 2.发送消息
@@ -220,6 +220,8 @@ class WecomClient:
         :param media_type: 媒体类型
         :param media_path: 媒体文件路径
         :param media_name: 媒体文件名
+        :param title: 媒体标题，仅视频消息有效
+        :param desc: 媒体描述，仅视频消息有效
         :param part_ids: 部门 id 列表
         :param tag_ids: 标签 id 列表
         :return: none
@@ -237,13 +239,60 @@ class WecomClient:
             "agentid": app_id,
             media_type.value[0]: {
                 "media_id": media_id,
-                "title": "Title",
-                "description": "Description"
+                "title": title,
+                "description": desc
             },
             "enable_duplicate_check": 0,
             "duplicate_check_interval": 1800
         }
         self.send(app_id, data)
+
+    def send_textcard(self, app_id: int, user_ids: List[str],
+                      title: str, desc: str, url: str, btntxt: str = '详情',
+                      part_ids: List[str] = None, tag_ids: List[str] = None):
+        """
+        发送文本卡片消息，示例：
+        client.send_textcard(
+            1000002,
+            ['weihao.lv'],
+            '领奖通知',
+            '<div class=\"gray\">2016年9月26日</div> <div class=\"normal\">恭喜你抽中iPhone 7一台，领奖码：xxxx</div>'
+            '<div class=\"highlight\">请于2016年10月10日前联系行政同事领取</div>',
+            'https://baidu.com'
+        )
+
+        TIPS：
+            1. 文本卡片描述中的高亮等在同步微信时不支持，只能作无效果的文本显示
+            2. 卡片下方的按钮在微信中也不支持，不作显示
+
+        :param app_id: 发送消息的 应用id
+        :param user_ids: 企微中的 成员id 列表
+        :param title: 媒体标题，仅视频消息有效
+        :param desc: 媒体描述，仅视频消息有效
+        :param url: 点击卡片跳转的链接
+        :param btntxt: 按钮文字
+        :param part_ids: 部门 id 列表
+        :param tag_ids: 标签 id 列表
+        :return: none
+        """
+        data = {
+            "touser": "|".join(user_ids),
+            "toparty": "|".join(part_ids) if part_ids else None,
+            "totag": "|".join(tag_ids) if tag_ids else None,
+            "msgtype": "textcard",
+            "agentid": app_id,
+            "textcard": {
+                "title": title,
+                "description": desc,
+                "url": url,
+                "btntxt": btntxt
+            },
+            "enable_id_trans": 0,
+            "enable_duplicate_check": 0,
+            "duplicate_check_interval": 1800
+        }
+
+        client.send(1000002, data)
 
 
 if __name__ == '__main__':
