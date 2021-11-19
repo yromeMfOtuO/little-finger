@@ -347,7 +347,7 @@ class WecomClient:
             "duplicate_check_interval": 1800
         }
 
-        client.send(1000002, data)
+        self.send(1000002, data)
 
     def send_articles(self, app_id: int, user_ids: List[str], articles: List[Article],
                       part_ids: List[str] = None, tag_ids: List[str] = None):
@@ -392,7 +392,7 @@ class WecomClient:
             "enable_duplicate_check": 0,
             "duplicate_check_interval": 1800
         }
-        client.send(1000002, data)
+        self.send(1000002, data)
 
 
 if __name__ == '__main__':
