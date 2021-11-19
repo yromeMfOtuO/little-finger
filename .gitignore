@@ -6,3 +6,4 @@ little_finger.egg-info
 .idea 2
 **/__pycache__
 publish.sh
+**/wecom_cache_*.json

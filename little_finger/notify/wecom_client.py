@@ -15,10 +15,13 @@ TIPS:
 import enum
 import json
 import os
-
+from datetime import datetime, date
 from typing import List
+
 import requests
 from requests_toolbelt import MultipartEncoder
+
+from little_finger.utils import date_util
 
 
 class WecomConfig:
@@ -31,14 +34,52 @@ class WecomConfig:
         企微应用配置类
         """
 
-        def __init__(self, app_id: int, app_secret: str):
+        def __init__(self, app_id: int, app_secret: str,
+                     access_token: str = None, expire_time: datetime = None):
             self.app_id = app_id
             self.app_secret = app_secret
-            self.access_token = None
+            self.access_token = access_token
+            self.expire_time = expire_time
+
+        @classmethod
+        def decode(cls, json_array: List[dict]):
+            if not json_array:
+                return []
+            return [
+                cls(
+                    app_id=i['app_id'],
+                    app_secret=i['app_secret'],
+                    access_token=i['access_token'],
+                    expire_time=date_util.unserialize(i['expire_time'])
+                ) for i in json_array
+            ]
 
     def __init__(self, corp_id: str, apps: List[WecomAppConfig]):
         self.corp_id = corp_id
         self.apps = apps
+
+    class Encoder(json.JSONEncoder):
+        """json 序列化时间"""
+
+        def default(self, o):
+            if isinstance(o, datetime):
+                return o.strftime('%Y-%m-%d %H:%M:%S')
+            if isinstance(o, date):
+                return o.strftime('%Y-%m-%d')
+            if isinstance(o, WecomConfig):
+                return o.__dict__
+            if isinstance(o, WecomConfig.WecomAppConfig):
+                return o.__dict__
+            return json.JSONEncoder.default(self, o)
+
+    @classmethod
+    def decode(cls, json_obj: dict):
+        if not json_obj:
+            return None
+        return cls(
+            corp_id=json_obj['corp_id'],
+            apps=WecomConfig.WecomAppConfig.decode(json_obj['apps'])
+        )
 
 
 class MediaType(enum.Enum):
@@ -76,7 +117,7 @@ class WecomClient:
         if config is None:
             raise Exception('获取企微配置失败')
         self.config = config
-        self.app_index = {app.app_id: app for app in config.apps}
+        self.app_index = None
         self.refresh_token()
 
     def get_corp_id(self) -> str:
@@ -110,6 +151,7 @@ class WecomClient:
                 ]
             )
             app.access_token = resp.json()['access_token']
+        self.app_index = {app.app_id: app for app in self.config.apps}
 
     def send(self, app_id, data):
         """发送消息"""
