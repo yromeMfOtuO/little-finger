@@ -7,3 +7,4 @@ little_finger.egg-info
 **/__pycache__
 publish.sh
 **/wecom_cache_*.json
+**/*.log
