@@ -21,6 +21,7 @@ from typing import List
 import requests
 from requests_toolbelt import MultipartEncoder
 
+from little_finger.logg import logger
 from little_finger.utils import date_util
 
 
@@ -43,6 +44,7 @@ class WecomConfig:
 
         @classmethod
         def decode(cls, json_array: List[dict]):
+            """decode"""
             if not json_array:
                 return []
             return [
@@ -74,6 +76,7 @@ class WecomConfig:
 
     @classmethod
     def decode(cls, json_obj: dict):
+        """decode"""
         if not json_obj:
             return None
         return cls(
@@ -115,7 +118,8 @@ class WecomClient:
 
     def __init__(self, config: WecomConfig):
         if config is None:
-            raise Exception('获取企微配置失败')
+            logger.error('wecom config empty')
+            raise Exception('企微配置为空')
         self.config = config
         self.app_index = None
         self.refresh_token()
@@ -134,14 +138,18 @@ class WecomClient:
         :return: access_token
         """
         if app_id not in self.app_index:
+            logger.error("illegal appid %d", app_id)
             raise Exception("非法应用id")
-        return self.app_index.get(app_id).access_token
+        token = self.app_index.get(app_id).access_token
+        logger.info("get access token: %s by appid: %d", token, app_id)
+        return token
 
     def refresh_token(self):
         """
         获取 应用access_token，作为后续接口请求的凭证
         :return: None
         """
+        logger.info('access token refresh by simple client')
         for app in self.config.apps:
             resp = requests.get(
                 f"{self.bpath}/gettoken",
@@ -155,14 +163,17 @@ class WecomClient:
 
     def send(self, app_id, data):
         """发送消息"""
+        data = json.dumps(data, default=lambda obj: obj.__dict__)
+        logger.info('send to appid: %d, message: %s', app_id, data)
         resp = requests.post(
             f'{self.bpath}/message/send',
             params=[
                 ("access_token", self.get_access_token(app_id))
             ],
-            data=json.dumps(data, default=lambda obj: obj.__dict__)
+            data=data
         )
-        print(resp.json())
+        logger.info('send to appid: %d, message: %s, resp: %s', app_id, data, resp.text)
+        # print(resp.json())
 
     def upload(self, app_id: int, media_type: MediaType, media_path: str, media_name: str) -> str:
         """
