@@ -4,3 +4,4 @@ numpy~=1.21.0
 requests~=2.25.1
 blinker~=1.4
 log4mongo~=1.7.0
+redis~=4.0.2
