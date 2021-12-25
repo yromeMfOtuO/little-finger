@@ -78,7 +78,7 @@ class WecomRedisCacheClient(WecomClient):
                 ]
             )
             app.access_token = resp.json()['access_token']
-            self.redis_client.setex(app.access_token, '1', int(resp.json()['expires_in']))
+            self.redis_client.set_ex(app.access_token, '1', int(resp.json()['expires_in']))
 
     def get_access_token(self, app_id: int):
         """
