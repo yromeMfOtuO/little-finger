@@ -7,6 +7,7 @@ from http.cookies import SimpleCookie
 from shlex import split
 from urllib.parse import urlparse
 
+import requests
 from w3lib.http import basic_auth_header
 
 parser = argparse.ArgumentParser()
@@ -46,7 +47,7 @@ def args_from_curl(curl: str):
     if not parsed_url.scheme:
         url = 'http://' + url
     result = {'method': args.method.upper(), 'url': url}
-    headers = []
+    headers = {}
     cookies = {}
     for header in args.headers or ():
         name, val = header.split(':', 1)
@@ -56,10 +57,10 @@ def args_from_curl(curl: str):
             for name, morsel in SimpleCookie(val).items():
                 cookies[name] = morsel.value
         else:
-            headers.append((name, val))
+            headers[name] = val
     if args.auth:
         user, password = args.auth.split(':', 1)
-        headers.append(('Authorization', basic_auth_header(user, password)))
+        headers['Authorization'] = basic_auth_header(user, password)
     if headers:
         result['headers'] = headers
     if cookies:
@@ -75,28 +76,41 @@ def closure_from_curl(curl: str):
     :param curl: curl命令
     :return: python requests closure
     """
+    args = args_from_curl(curl)
 
-    ...
+    def req():
+        if not args or not args['method'] or not args['url']:
+            raise Exception('参数错误')
+        if args['method'] == 'GET':
+            # 注意默认requests无超时时间，会导致阻塞
+            return requests.get(url=args['url'], cookies=args['cookies'], headers=args['headers'], timeout=2)
+        elif args['method'] == 'POST':
+            return requests.post(url=args['url'], cookies=args['cookies'], headers=args['headers'], timeout=2)
+        else:
+            raise Exception('请求方法错误')
+    return req
 
 if __name__ == '__main__':
-    r = args_from_curl("""curl 'https://dwci.aihaisi.com/job/CI_supervision-api/build?delay=0sec' \
-      -H 'authority: dwci.aihaisi.com' \
-      -H 'cache-control: max-age=0' \
-      -H 'sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="97", "Chromium";v="97"' \
-      -H 'sec-ch-ua-mobile: ?0' \
-      -H 'sec-ch-ua-platform: "macOS"' \
-      -H 'upgrade-insecure-requests: 1' \
-      -H 'origin: https://dwci.aihaisi.com' \
-      -H 'content-type: application/x-www-form-urlencoded' \
-      -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36' \
-      -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' \
-      -H 'sec-fetch-site: same-origin' \
-      -H 'sec-fetch-mode: navigate' \
-      -H 'sec-fetch-user: ?1' \
-      -H 'sec-fetch-dest: document' \
-      -H 'referer: https://dwci.aihaisi.com/job/CI_supervision-api/build?delay=0sec' \
-      -H 'accept-language: zh-CN,zh;q=0.9' \
-      -H 'cookie: jenkins-timestamper-offset=-28800000; JSESSIONID.903ef379=node017r79jv0x6wbs11fskht9rzmwj16593.node0; JSESSIONID.bdccae7f=node01n0dwjwr8rcir1sja7qo5ketu3267.node0; JSESSIONID.771445df=node09kkz0ped68cm1cmdp6zf0khh2370.node0; JSESSIONID.91669e47=node01b1utukfnd5u857ahqwxk0nji2495.node0; JSESSIONID.1957dbe9=node015hzy8w9aztcioyy6qfzee73y489.node0; JSESSIONID.66d06f01=node01th58dzovwh6e1m05fpx2xke4r14676.node0; JSESSIONID.002cf490=node0fyvbd6xy13ns13bi5bq5gz2xq446.node0; JSESSIONID.b72fef8c=node01prkv51oqyuo2y2gi4cdsclt626.node0; JSESSIONID.ed4dc631=node010co59q0frx6g19oer0fubtx4f2760.node0; JSESSIONID.6c62b03e=node0cp5syx1cfvon1ptuvivje5onu1360.node0; ADMIN_SESSION=8b21c708a960de9e56f4a6d6769d284da80850d3-partnerCode=&userId=5872; experimentation_subject_id=ImVmYzU5MjY5LTVjYmEtNGJhMC1iMGY2LTgxM2VhNjZmNTAxOSI%3D--d067ed262cc28e5d35b84e197192a7ebfd906e30; JSESSIONID.2c352043=node0yltxbvi7gt8zygd8uprhjmim842.node0; JSESSIONID.8479b1df=node0r1s2z5jvkvkvw86eb1n5fl4w2009.node0; JSESSIONID.7a89bdd9=node01x0okhka04zvh14rtwjd563kam184.node0; _ga=GA1.2.92600959.1597117503; JSESSIONID.3ab5a7ef=node0kq7300daq1o71o505uqo62qhm1586.node0; JSESSIONID.c77bffac=node016owf3qlm6da1yyvh6s5ecmvi1063.node0; _gcl_au=1.1.848091483.1641539925; _rdt_uuid=1641539926551.8b79cae9-6958-425c-a858-6e7d1388dda6; screenResolution=1440x900; hudson_auto_refresh=true; JSESSIONID.1fa093a2=node01g2q69k7ebej8u7wd2hy00a1h17715.node0' \
-      --data-raw 'name=branchName&value=master&name=ciId&value=&statusCode=303&redirectTo=.&json=%7B%22parameter%22%3A+%5B%7B%22name%22%3A+%22branchName%22%2C+%22value%22%3A+%22master%22%7D%2C+%7B%22name%22%3A+%22ciId%22%2C+%22value%22%3A+%22%22%7D%5D%2C+%22statusCode%22%3A+%22303%22%2C+%22redirectTo%22%3A+%22.%22%7D&Submit=%E5%BC%80%E5%A7%8B%E6%9E%84%E5%BB%BA' \
-      --compressed""")
+    curl = """curl 'https://mp.weixin.qq.com/mp/appmsgreport?action=page_time_5s&__biz=MzIxNTQ3NDMzMw==&uin=&key=&pass_ticket=&wxtoken=777&devicetype=&clientversion=&__biz=MzIxNTQ3NDMzMw%3D%3D&appmsg_token=&x5=0&f=json' \
+  -H 'authority: mp.weixin.qq.com' \
+  -H 'sec-ch-ua: " Not A;Brand";v="99", "Chromium";v="98", "Google Chrome";v="98"' \
+  -H 'content-type: application/x-www-form-urlencoded; charset=UTF-8' \
+  -H 'x-requested-with: XMLHttpRequest' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36' \
+  -H 'sec-ch-ua-platform: "Windows"' \
+  -H 'accept: */*' \
+  -H 'origin: https://mp.weixin.qq.com' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'referer: https://mp.weixin.qq.com/s/_DqBnZlD3Ucgdc8Gi2Mo8Q' \
+  -H 'accept-language: zh-CN,zh;q=0.9' \
+  -H 'cookie: rewardsn=; wxtokenkey=777' \
+  --data-raw 'report_bizuin=MzIxNTQ3NDMzMw%3D%3D&title=%E5%85%B3%E4%BA%8E%E4%BA%8B%E5%8A%A1%E5%92%8C%E9%94%81%E7%9A%84%E4%B8%80%E4%BA%9B%E7%BB%86%E8%8A%82&mid=2247484347&idx=1&subscene=10000&sessionid=svr_37d3f1e83b4&enterid=1645882556&read_cnt=0&old_like_cnt=0&like_cnt=0&screen_width=1205&screen_height=321&screen_num=22&idkey=64469_15_1%3B27613_31_270&copyright_stat=1&ori_article_type=%E7%A7%91%E6%8A%80%E4%BA%92%E8%81%94%E7%BD%91&video_cnt=0&read_screen_num=1&is_finished_read=0&scene=&content_len=1195556&start_time=1645882556091&end_time=1645882562405&handup_time=0&total_height=7000&exit_height=321&img_640_cnt=0&img_0_cnt=0&img_300_cnt=0&wtime=1505&ftime=293&ptime=682&onload_time=1505&reward_heads_total=0&reward_heads_fail=0&outer_pic=0&publish_time=1573777860&item_show_type=0&page_req_info=%7B%22startGetAppmsgExtTime%22%3A1645882556604%2C%22startGetAppmsgAdTime%22%3A1645882556695%2C%22receiveGetAppmsgExt%22%3A%22200%7C1645882556910%22%2C%22receiveGetAppmsgAd%22%3A%22200%7C1645882556925%22%2C%22domCompleteTime%22%3A1645882556297%7D&is_darkmode=1&search_click_id=0&webp_total=1&webp_lossy=1&webp_lossless=1&webp_alpha=1&webp_animation=1&download_cdn_webp_img_cnt=0&download_img_cnt=0&download_cdn_img_cnt=0&img_cnt=1&report_time=1645882562&source=&req_id=2621edxlIQ9Yqher5RgogEv3&recommend_version=&class_id=&ascene=-1&hotspotjson=%7B%22hotspotinfolist%22%3A%5B%5D%7D&is_pay_subscribe=0&is_paid=0&preview_percent=0&is_finished_preview=0&fee=&pay_cnt=undefined&worthy_cnt=undefined&exptype=&expsessionid=' \
+  --compressed"""
+    r = args_from_curl(curl)
     print(r)
+    req = closure_from_curl(curl)
+    resp = req()
+    print(resp)
