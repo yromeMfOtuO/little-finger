@@ -33,6 +33,9 @@ class SMMSClient:
             # 'Content-Type': 'multipart/form-data',
             'Authorization': self.token
         }
+        # requests 对form-data支持不友好，
+        # 1. 可以通过手动构建字符串payload通过data参数传递
+        # 2. 通过files参数传递，这里上传文件，适合用files参数传递
         files = {
             'smfile': open(img_path, 'rb')
         }
