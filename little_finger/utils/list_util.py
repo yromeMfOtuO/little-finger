@@ -74,6 +74,17 @@ def distinct_by(data: list, key_column: str) -> list:
     return list(od.values())
 
 
+def foreach(func, iterable):
+    """
+    模拟 foreach
+    :param func: 要对每个元素执行的函数
+    :param iterable: 可迭代对象
+    :return: None
+    """
+    for i in iterable:
+        func(i)
+
+
 if __name__ == '__main__':
     print(distinct_by([{"name": 2, "age": 3}, {"name": 2, "age": 2}, {"name": 1, "age": 2}], "name"))
     ...
