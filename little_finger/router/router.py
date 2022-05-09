@@ -44,7 +44,7 @@ def router(func):
 
 
 if __name__ == '__main__':
-
+    # pylint: disable = E, W, R, C
     @router
     def fun(key):
         raise ValueError(f'key error, key: {key}')
