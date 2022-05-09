@@ -2,4 +2,4 @@
 图床相关
 """
 
-from .smms import SMMSClient
+from little_finger.img.smms import *
