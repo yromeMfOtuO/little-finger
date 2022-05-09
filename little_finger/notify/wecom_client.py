@@ -418,4 +418,4 @@ if __name__ == '__main__':
     )
 
     client = WecomClient(config_)
-    client.send('user_id', 1000002, 'multi app client test')
+    client.send_text(1000002, ['user_id'], 'multi app client test')
