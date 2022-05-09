@@ -12,16 +12,16 @@ class NpEncoder(json.JSONEncoder):
     用于 pandas numpy 导出的数据 转换成 json的 encoder
     """
 
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.int64):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super(NpEncoder, self).default(obj)
+    def default(self, o):
+        if isinstance(o, np.integer):
+            return int(o)
+        if isinstance(o, np.int64):
+            return int(o)
+        if isinstance(o, np.floating):
+            return float(o)
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        return super(NpEncoder, self).default(o)
 
 
 def convert_data_file_2_list(path: str, read_method, sheet_name=None, fill_merged_cell=True) -> list:
