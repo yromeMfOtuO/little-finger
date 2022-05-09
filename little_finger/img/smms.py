@@ -115,7 +115,7 @@ class SMMSClient:
 if __name__ == '__main__':
     client = SMMSClient(
         'username',
-        'passwd'
+        '4b7d21ec3fdaf5d613941b37968ffb534cf48577'  # pragma: allowlist secret
     )
     # r = client.upload_img('image_path')
     # print(r)
