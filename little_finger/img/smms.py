@@ -4,7 +4,7 @@ sm.ms 图床
 
 import requests
 
-from little_finger.utils import check_flag, check_flag_export_data
+from little_finger.utils import check_flag, check_flag_export_data, check_status
 
 
 class SMMSClient:
@@ -31,7 +31,7 @@ class SMMSClient:
             url=self.host + '/token',
             data={'username': self.username, 'password': self.passwd}
         )
-        data = check_flag_export_data(resp, "获取token请求异常")
+        data = check_flag_export_data(resp, err_msg="获取token请求异常")
         return data['token']
 
     def upload_img(self, img_path: str):
@@ -65,13 +65,29 @@ class SMMSClient:
             files=files,
             headers=self.headers,
         )
-        result = resp.json()
-        print(result)
-        if not result:
-            raise Exception('上传图片请求异常')
-        if not result['success']:
-            raise Exception(f"上传图片失败：{result['message']}")
-        return result['data']
+        check_flag_export_data(resp)
+
+    def upload_online_img(self, img_url: str, img_name: str = None):
+        """
+        upload online img
+        :param img_url: img url
+        :param img_name: img name if None will parse from url
+        """
+        respd = requests.get(img_url)
+        check_status(respd)
+        print(respd)
+        # img_name = img_name if img_name else img_url.split('/')[-1]
+        respu = requests.post(
+            url=self.host + '/upload',
+            files={
+                # TODO
+                # 这里上传之后 smfile被当作了文件名，但是不使用smfile作为key会导致上传失败，目前可能只能先保存图片再上传可以解决
+                # 获取直接代码生成markdown图片链接，添加图片名
+                'smfile': respd.content
+            },
+            headers=self.headers,
+        )
+        return check_flag_export_data(respu)
 
     def delete_img(self, img_hash: str):
         """
@@ -99,10 +115,11 @@ class SMMSClient:
 if __name__ == '__main__':
     client = SMMSClient(
         'username',
-        'password'
+        'passwd'
     )
     # r = client.upload_img('image_path')
     # print(r)
     # client.delete_img("hash")
-    imgs = client.upload_history()
-    print(imgs)
+    # imgs = client.upload_history()
+    # print(imgs)
+    client.upload_online_img("http://tupian.qqjay.com/u/2016/0919/1_171052_5.jpg")
