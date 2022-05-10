@@ -9,4 +9,3 @@ publish.sh
 **/wecom_cache_*.json
 **/*.log
 detect-secrets-plugin.py
-.secrets.baseline
