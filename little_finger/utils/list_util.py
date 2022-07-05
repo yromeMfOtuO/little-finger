@@ -85,6 +85,19 @@ def foreach(func, iterable):
         func(i)
 
 
+def split(data: list, count: int = 10) -> list:
+    """
+    将列表切分成固定大小的列表,
+    使用步长遍历+列表分片
+    :param data: 数据列表
+    :param count: 子列表大小
+    :return: 子列表列表
+    """
+    len_ = len(data)
+    return [data[i:min(i + count, len_)] for i in range(0, len_, count)]
+
+
 if __name__ == '__main__':
     print(distinct_by([{"name": 2, "age": 3}, {"name": 2, "age": 2}, {"name": 1, "age": 2}], "name"))
-    ...
+    l = [i for i in range(2)]
+    print(split(l, 3))
