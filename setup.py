@@ -17,11 +17,11 @@ def requirements():
 
 setup(
     name='little-finger',
-    version='0.0.14',  # 版本号
+    version='0.0.16',  # 版本号
     description='tool pkg.',  # 包的介绍
     author='yromeMfOtuO',  # 作者 就是我啦～
     author_email='weihao.lv@outlook.com',  # 你的邮箱
-    url='',  # 项目地址，一般的填git地址 也可以是任意可用的url 不过我喜欢使用 git
+    url='https://github.com/yromeMfOtuO/little-finger',  # 项目地址，一般的填git地址 也可以是任意可用的url 不过我喜欢使用 git
     packages=find_packages(),  # Python导入包的列表，我们使用find_packages() 来自动收集
     long_description=long_description(),  # 项目的描述 一般是 string 上文中定义了它
     long_description_content_type="text/markdown",  # 描述文档 README 的格式 一般我喜欢MD. 也可以是你喜欢的其他格式 支不支持我就不知道了～ 估计HTML 是支持的
