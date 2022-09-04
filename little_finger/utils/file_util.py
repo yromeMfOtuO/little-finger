@@ -24,3 +24,7 @@ def download_file(url: str, path: str, http_args: dict):
     with open(path, 'wb') as f:
         f.write(file_content)
         f.flush()
+
+
+def get_file_format(path: str) -> str:
+    return path.split('.')[-1]

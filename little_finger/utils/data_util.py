@@ -6,6 +6,8 @@ import json
 import pandas as pd
 import numpy as np
 
+from little_finger.utils.file_util import get_file_format
+
 
 class NpEncoder(json.JSONEncoder):
     """
@@ -24,6 +26,16 @@ class NpEncoder(json.JSONEncoder):
         return super(NpEncoder, self).default(o)
 
 
+def data_frame_2_list(df) -> list:
+    df_list = []
+    for i in df.index.values:
+        # loc为按列名索引 iloc 为按位置索引，使用的是 [[行号], [列名]]
+        df_line = df.loc[i].to_dict()
+        # 将每一行转换成字典后添加到列表
+        df_list.append(df_line)
+    return df_list
+
+
 def convert_data_file_2_list(path: str, read_method, sheet_name=None, fill_merged_cell=True) -> list:
     """
     从数据文件读取数据，转换为 list
@@ -40,13 +52,7 @@ def convert_data_file_2_list(path: str, read_method, sheet_name=None, fill_merge
     # 填充合并的单元格
     if fill_merged_cell:
         df = df.fillna(method='pad')
-    df_list = []
-    for i in df.index.values:
-        # loc为按列名索引 iloc 为按位置索引，使用的是 [[行号], [列名]]
-        df_line = df.loc[i].to_dict()
-        # 将每一行转换成字典后添加到列表
-        df_list.append(df_line)
-    return df_list
+    return data_frame_2_list(df)
 
 
 def covert_excel_list(path: str, sheet_name=None, fill_merged_cell=True) -> list:
@@ -67,3 +73,23 @@ def convert_csv_list(path: str) -> list:
     :return: 数据列表 list[dict]
     """
     return convert_data_file_2_list(path, pd.read_csv)
+
+
+def read_data(path: str, **kwargs) -> list:
+    """
+    read data list from data file according to the file extension, include .csv|.xls|.xlsx,
+    :param path: data file path
+    :param kwarg: keywords param of pd.read_csv|pd.read_excel，like sep='|'
+    :return: data list
+    """
+    file_format = get_file_format(path)
+    if file_format == 'csv':
+        df = pd.read_csv(path, **kwargs)
+    elif file_format == 'xls' or file_format == 'xlsx':
+        df = pd.read_excel(path, **kwargs)
+    else:
+        return []
+
+    return data_frame_2_list(df)
+
+
