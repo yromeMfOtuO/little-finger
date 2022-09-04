@@ -26,5 +26,13 @@ def download_file(url: str, path: str, http_args: dict):
         f.flush()
 
 
+def write_str_2_file(path: str, content: str) -> None:
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # 将他拷贝到本地文件 w 写 b 二进制  wb代表写入二进制文本
+    with open(path, 'w') as f:
+        f.write(content)
+        f.flush()
+
+
 def get_file_format(path: str) -> str:
     return path.split('.')[-1]
