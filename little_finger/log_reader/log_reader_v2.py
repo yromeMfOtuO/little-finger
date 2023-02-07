@@ -21,13 +21,13 @@ class LogReaderV2:
                               total_convert_func=lambda x: x):
         """
         这里的取值 key 与kibana 的日志格式有关，日志格式不同则不适用
-        :param total_convert_func: 整体数据转换函数
-        :param single_convert_func: 单条数据转换函数 例如 json.loads()
         :param log_path: 日志 json 文件路径
         :param log_list_func: 获取日志 json 中日志条目 list 的函数
         :param log_text_func: 获取日志条目中 日志文本 的函数
         :param filter_func: 日志过滤函数，用于过滤在 kibana 中不方便过滤的日志
         :param reg_func: 日志截取匹配函数，用于在日志中截取或者匹配到需要的 数据 json
+        :param single_convert_func: 单条数据转换函数 例如 json.loads()
+        :param total_convert_func: 整体数据转换函数
         :return: 数据列表
         """
         if log_path.__contains__('.json') is False:
