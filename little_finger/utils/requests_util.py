@@ -90,6 +90,7 @@ def closure_from_curl(curl: str):
             raise Exception('请求方法错误')
     return req
 
+
 if __name__ == '__main__':
     curl = """curl 'https://mp.weixin.qq.com/mp/appmsgreport?action=page_time_5s&__biz=MzIxNTQ3NDMzMw==&uin=&key=&pass_ticket=&wxtoken=777&devicetype=&clientversion=&__biz=MzIxNTQ3NDMzMw%3D%3D&appmsg_token=&x5=0&f=json' \
   -H 'authority: mp.weixin.qq.com' \
