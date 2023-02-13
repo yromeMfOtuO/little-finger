@@ -34,6 +34,16 @@ def convert_list_2_dict(data: list, key_column: str) -> dict:
     return result
 
 
+def to_dict(data: list, key: str):
+    """
+    List 转换成 dict， key 转换成 str
+    :param data: data list
+    :param key: key column name
+    :return:
+    """
+    return convert_list_2_dict(data, key)
+
+
 def sort_by(data: list, key_column: str, reverse=True) -> list:
     """
     列表排序
