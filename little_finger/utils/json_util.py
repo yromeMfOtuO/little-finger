@@ -103,6 +103,24 @@ def convert_from_tostring_level(obj_str: str):
     return None
 
 
+def parse_json_str(json_str: str) -> dict:
+    """
+    parse json string to dict
+    :param json_str: json string
+    :return:
+    """
+    return {}
+
+
+def pretty_json_string(json_str: str) -> str:
+    """
+    parse json to pretty format
+    :param json_str: json string
+    :return:
+    """
+    return ""
+
+
 if __name__ == '__main__':
     tostring = convert_from_tostring("(id=2112492, userId=35018924, orderId=fa2e034ad5944ece87144b50f5cf5a23, type=0, sourceAmount=87.51000000, tradeFee=0.45000000, railFee=3.29000000, price=7536.49649220, obtainAmount=0.01111478, status=4, fiatChargeStatus=null, payType=1, createTime=Thu Feb 02 10:26:34 UTC 2023, updateTime=Thu Feb 02 10:28:00 UTC 2023, completedTime=Thu Feb 02 10:28:00 UTC 2023, quoteId=ef048b4a2b7e4274a7cc4bb7c3ebd6f0, cryptoCurrency=BTC, fiatCurrency=USD, startDate=null, endDate=null, tranId=319173599, rversion=6, executePrice=7043.30000000, executeQty=0.01230700, usdToUsdtRate=null, usdtToUsdRate=null, forexRate=null, dForexRate=null, profitAndLoss=null, channelQuotePrice=7432.44230000, spreadCoin=USD, spreadAmount=1.16000000, email=null, rail=CHECKOUT, mode=GOOGLE_PAY, desc=, ext1=null, ext2=null, referNo=, clientType=android, paymentId=85a16768359d462ba8e9c73d548fd0e4, errorCode=null, errorReason=null, isErrorReasonChanged=false, recurringBuyId=8325, purchaseTypeId=8008e07679ea469ea31bc19c20b4cc51, versionType=null, versionNum=null, transferSource=null, transferStatus=null)")
     print(tostring)
