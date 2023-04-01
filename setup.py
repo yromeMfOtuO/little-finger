@@ -17,7 +17,7 @@ def requirements():
 
 setup(
     name='little-finger',
-    version='0.0.18',  # 版本号
+    version='0.0.19',  # 版本号
     description='tool pkg.',  # 包的介绍
     author='yromeMfOtuO',  # 作者 就是我啦～
     author_email='weihao.lv@outlook.com',  # 你的邮箱

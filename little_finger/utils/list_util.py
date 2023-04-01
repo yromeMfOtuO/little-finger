@@ -34,6 +34,20 @@ def convert_list_2_dict(data: list, key_column: str) -> dict:
     return result
 
 
+def convert_list_2_dict_by_key_func(data: list, key_func) -> dict:
+    """
+    List 转换成 dict， key 转换成 str
+    :param data: 数据列表
+    :param key_func: key 生成函数
+    :return: str(key) -> datum
+    """
+    # return {i[key_column]: i for i in data} # 列表展开式实现
+    result = {}
+    for i in data:
+        result[key_func(i)] = i
+    return result
+
+
 def to_dict(data: list, key: str):
     """
     List 转换成 dict， key 转换成 str
@@ -42,6 +56,16 @@ def to_dict(data: list, key: str):
     :return:
     """
     return convert_list_2_dict(data, key)
+
+
+def to_dict_by_key_func(data: list, key_func):
+    """
+    List 转换成 dict， key 转换成 str
+    :param data: 数据列表
+    :param key_func: key 生成函数
+    :return: str(key) -> datum
+    """
+    return convert_list_2_dict_by_key_func(data, key_func)
 
 
 def sort_by(data: list, key_column: str, reverse=True) -> list:
