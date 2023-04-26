@@ -7,3 +7,4 @@ log4mongo~=1.7.0
 redis~=4.0.2
 w3lib~=1.22.0
 requests_toolbelt~=0.9.1
+Jinja2~=3.1.2
