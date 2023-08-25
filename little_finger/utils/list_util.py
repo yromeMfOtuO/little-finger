@@ -140,8 +140,19 @@ def filter_by(data: list, func) -> list:
     return [i for i in data if func(i)]
 
 
+def map_by(data: list, func) -> list:
+    """
+    对列表中的每个元素执行函数
+    :param data: 数据列表
+    :param func: 执行函数
+    :return: 执行后的列表
+    """
+    return [func(i) for i in data]
+
+
 if __name__ == '__main__':
     print(distinct_by([{"name": 2, "age": 3}, {"name": 2, "age": 2}, {"name": 1, "age": 2}], "name"))
     l = [i for i in range(2)]
     print(split(l, 3))
     print(filter_by([1, 2, 3, 4, 5], lambda x: x > 3))
+    print(map_by([1, 2, 3, 4, 5], lambda x: x * 2))
