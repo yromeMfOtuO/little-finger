@@ -1,0 +1,27 @@
+{
+    "states": [
+        {
+            "state": "state1",
+            "transactions": [
+                {
+                    "from": "state1",
+                    "to": "state2", // transition to another state
+                    "event": "event1",
+                    "condition": "condition1",
+                    "action": "action1"
+                },
+                {
+                    "from": "state1",
+                    "to": "state1", // self transition
+                    "event": "event2",
+                    "condition": "condition2",
+                    "action": "action2"
+                }
+            ]
+        },
+        {
+            "state": "state2",
+            "transactions": [] // no transactions
+        }
+    ]
+}
