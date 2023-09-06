@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 
 from websockets import connect
 
@@ -19,6 +18,8 @@ async def listen(url, callback) -> None:
 
 
 if __name__ == '__main__':
+    from datetime import datetime
+
     asyncio.get_event_loop().run_until_complete(
         listen(
             "wss://stream.binance.us:9443/stream?streams=btcusdt@miniTicker/ethusdt@miniTicker",
