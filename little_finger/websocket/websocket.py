@@ -1,6 +1,12 @@
+"""
+https://www.runoob.com/python3/python3-multithreading.html
+
+"""
+
 import asyncio
 
 from websockets import connect
+from threading import Thread
 
 
 async def listen(url, callback) -> None:
@@ -17,12 +23,27 @@ async def listen(url, callback) -> None:
                 callback(message)
 
 
+def async_listen(url, callback) -> Thread:
+
+    def func(url_, callback_):
+        asyncio.get_event_loop().run_until_complete(
+            listen(url_, callback_)
+        )
+
+    t = Thread(
+        name=f'Thread-{url}',
+        target=func,
+        args=(url, callback)
+    )
+    t.start()
+    return t
+
+
 if __name__ == '__main__':
     from datetime import datetime
 
-    asyncio.get_event_loop().run_until_complete(
-        listen(
-            "wss://stream.binance.us:9443/stream?streams=btcusdt@miniTicker/ethusdt@miniTicker",
-            lambda x: print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + x)
-        )
-    )
+    print("start")
+    t = async_listen("wss://stream.binance.us:9443/stream?streams=btcusdt@miniTicker/ethusdt@miniTicker",
+                     lambda x: print(datetime.now().strftime('%Y-%m-%d %H:%M:%S') + x))
+    print("end")
+
