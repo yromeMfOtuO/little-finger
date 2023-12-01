@@ -19,7 +19,7 @@ def flatten(list_: list) -> list:
     return [list_]
 
 
-def convert_list_2_dict(data: list, key_column: str) -> dict:
+def to_dict_by_key_column(data: list, key_column: str) -> dict:
     """
     List 转换成 dict， key 转换成 str
     :param data: 数据列表
@@ -33,7 +33,7 @@ def convert_list_2_dict(data: list, key_column: str) -> dict:
     return result
 
 
-def convert_list_2_dict_by_key_func(data: list, key_func) -> dict:
+def to_dict_by_key_func(data: list, key_func) -> dict:
     """
     List 转换成 dict， key 转换成 str
     :param data: 数据列表
@@ -41,9 +41,21 @@ def convert_list_2_dict_by_key_func(data: list, key_func) -> dict:
     :return: str(key) -> datum
     """
     # return {i[key_column]: i for i in data} # 列表展开式实现
+    return to_dict_by_key_func_value_func(data, key_func, lambda x: x)
+
+
+def to_dict_by_key_func_value_func(data: list, key_func, value_func) -> dict:
+    """
+    List 转换成 dict， key 转换成 str
+    :param data: 数据列表
+    :param key_func: key 生成函数
+    :param key_func: value 生成函数
+    :return: str(key) -> datum
+    """
+    # return {i[key_column]: i for i in data} # 列表展开式实现
     result = {}
     for i in data:
-        result[key_func(i)] = i
+        result[key_func(i)] = value_func(i)
     return result
 
 
@@ -54,17 +66,7 @@ def to_dict(data: list, key: str):
     :param key: key column name
     :return:
     """
-    return convert_list_2_dict(data, key)
-
-
-def to_dict_by_key_func(data: list, key_func):
-    """
-    List 转换成 dict， key 转换成 str
-    :param data: 数据列表
-    :param key_func: key 生成函数
-    :return: str(key) -> datum
-    """
-    return convert_list_2_dict_by_key_func(data, key_func)
+    return to_dict_by_key_column(data, key)
 
 
 def sort_by(data: list, key_column: str, reverse=True) -> list:

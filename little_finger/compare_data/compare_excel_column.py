@@ -6,7 +6,7 @@ import json
 from typing import List
 
 from little_finger.utils.list_util import flatten
-from little_finger.utils.list_util import convert_list_2_dict
+from little_finger.utils.list_util import to_dict_by_key_column
 from little_finger.utils.data_util import convert_csv_list
 from little_finger.utils.data_util import covert_excel_list
 from little_finger.log_reader import LogReader
@@ -32,7 +32,7 @@ def convert_dict(path, key_column) -> dict:
             lambda x: json.loads(x)['dataList'],
             flatten
         )
-    return convert_list_2_dict(data, key_column)
+    return to_dict_by_key_column(data, key_column)
 
 
 def compare_raw(key, left_raw, right_raw, compare_column) -> None:

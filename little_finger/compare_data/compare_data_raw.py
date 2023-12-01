@@ -8,7 +8,7 @@ from typing import List
 from little_finger.log_reader import LogReader, LogReaderV2
 from little_finger.utils.data_util import convert_csv_list
 from little_finger.utils.data_util import covert_excel_list
-from little_finger.utils.list_util import convert_list_2_dict
+from little_finger.utils.list_util import to_dict_by_key_column
 from little_finger.utils.list_util import flatten
 
 def xingren_elk_read_func(path):
@@ -51,7 +51,7 @@ def convert_dict_v2(path, key_column, json_read_func=xingren_elk_read_func) -> d
     elif path.__contains__('.json'):
         # 需要根据 elk log 格式 匹配
         data = json_read_func(path)
-    return convert_list_2_dict(data, key_column)
+    return to_dict_by_key_column(data, key_column)
 
 
 def compare_raw(key, left_raw, right_raw, compare_column) -> None:
