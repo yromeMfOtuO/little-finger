@@ -73,3 +73,33 @@ def check_flag_export_data(response: requests.Response, flag: str = 'success', e
     :param err_msg: exception error message
     """
     return check_flag_export(response, flag, err_msg, "data")
+
+
+def get(uri_path: str, data: dict, headers: dict = None) -> dict:
+    """
+
+    :param uri_path:
+    :param data:
+    :param headers:
+    :return:
+    """
+    params = {
+        **data,
+    }
+    resp = requests.get(uri_path, params=params, headers=headers)
+    return resp.json()
+
+
+def post(uri_path: str, data: dict, headers: dict = None) -> dict:
+    """
+
+    :param uri_path:
+    :param data:
+    :param headers:
+    :return:
+    """
+    payload = {
+        **data,
+    }
+    resp = requests.post(uri_path, headers=headers, data=payload)
+    return resp.json()
