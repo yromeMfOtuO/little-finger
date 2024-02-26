@@ -17,7 +17,7 @@ function build() {
 function upload() {
     echo 'upload start'
     # 发布，需要输入用户名及密码
-    python3 -m twine upload dist/* -u '<username>' -p '<password>'
+    python3 -m twine upload dist/* -u '__token__' -p '<your token value>'
     echo 'upload Successfully'
 }
 
