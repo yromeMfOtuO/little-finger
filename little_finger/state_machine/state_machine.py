@@ -37,5 +37,25 @@ class StateMachine:
         self.records = dict()
 
 
+class Transaction:
+
+    ...
+
+
+class Action:
+
+    ...
+
+
+class Event:
+
+    ...
+
+
+class State:
+
+    ...
+
+
 if __name__ == '__main__':
     ...
