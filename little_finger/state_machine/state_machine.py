@@ -37,11 +37,6 @@ class StateMachine:
         self.records = dict()
 
 
-class Transaction:
-
-    ...
-
-
 class Action:
 
     ...
@@ -55,6 +50,80 @@ class Event:
 class State:
 
     ...
+
+class Condition:
+
+    ...
+
+
+class Transaction:
+
+    def __init__(self,
+                 from_state: State,
+                 to_state: State,
+                 event: Event,
+                 condition: Condition,
+                 action: Action):
+        self.from_state = from_state
+        self.to_state = to_state
+        self.event = event
+        self.condition = condition
+        self.action = action
+
+    ...
+
+
+class TransactionBuilder:
+
+    def __init__(self):
+        self.from_state = None
+        self.to_state = None
+        self.event = None
+        self.condition = None
+        self.action = None
+
+    def f(self, from_state: State):
+        self.from_state = from_state
+        return self
+
+    def t(self, to_state: State):
+        self.to_state = to_state
+        return self
+
+    def on(self, event: Event):
+        self.event = event
+        return self
+
+    def when(self, condition: Condition):
+        self.condition = condition
+        return self
+
+    def then(self, action: Action):
+        self.action = action
+        return self
+
+    def build(self):
+        return Transaction(
+            self.from_state,
+            self.to_state,
+            self.event,
+            self.condition,
+            self.action
+        )
+
+
+class InternalTransactionBuilder(TransactionBuilder):
+
+    def __init__(self):
+        super().__init__()
+
+    def i(self, state: State):
+        self.f(state)
+        self.t(state)
+        return self
+
+    ...
+
 
 
 if __name__ == '__main__':
