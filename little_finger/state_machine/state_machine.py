@@ -1,3 +1,6 @@
+import enum
+
+
 class StateMachine:
     def __init__(self, cfg, states, events_handler, actions_handler):
         # config information for an instance
@@ -39,7 +42,8 @@ class StateMachine:
 
 class Action:
 
-    ...
+    def d(self):
+        ...
 
 
 class Event:
@@ -47,12 +51,24 @@ class Event:
     ...
 
 
-class State:
-
+class State(enum.Enum):
+    """
+    子类继承
+    """
     ...
+
+
+class Context:
+
+        def __init__(self, state, event):
+            self.state = state
+            self.event = event
+        ...
 
 class Condition:
 
+    def satisfied(self, ctx: Context):
+        ...
     ...
 
 
@@ -71,6 +87,18 @@ class Transaction:
         self.action = action
 
     ...
+
+
+class StateMachine:
+
+    def __init__(self, states: dict[State, list[Transaction]]):
+        ...
+
+    def run(self, inputs):
+        ...
+
+    def reset(self):
+        ...
 
 
 class TransactionBuilder:
@@ -124,6 +152,17 @@ class InternalTransactionBuilder(TransactionBuilder):
 
     ...
 
+
+class StateMachineBuilder:
+
+    def external(self):
+        return TransactionBuilder()
+
+    def internal(self):
+        return InternalTransactionBuilder()
+
+    def build(self):
+        ...
 
 
 if __name__ == '__main__':
