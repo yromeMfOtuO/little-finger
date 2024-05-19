@@ -1,4 +1,5 @@
 import enum
+import json
 
 
 class StateMachine:
@@ -40,12 +41,6 @@ class StateMachine:
         self.records = dict()
 
 
-class Action:
-
-    def d(self):
-        ...
-
-
 class Event:
 
     ...
@@ -65,7 +60,22 @@ class Context:
             self.event = event
         ...
 
+
+class Action:
+
+    def do(self, ctx: Context):
+        """
+        具体的事件处理逻辑
+        需要子类具体实现
+        """
+        ...
+
+
 class Condition:
+    """
+    条件判断, 用于判断是否满足状态转移的条件
+    需要子类具体实现
+    """
 
     def satisfied(self, ctx: Context):
         ...
@@ -73,6 +83,10 @@ class Condition:
 
 
 class Transaction:
+    """
+    从一个状态到另一个状态的转移
+    包含初始结束状态, 触发事件, 是否符合执行条件判断, 动作
+    """
 
     def __init__(self,
                  from_state: State,
@@ -90,15 +104,34 @@ class Transaction:
 
 
 class StateMachine:
+    """
+    状态机
+    """
 
-    def __init__(self, states: dict[State, list[Transaction]]):
+    def __init__(self, name: str, states: dict[State, list[Transaction]]):
+        self.states = states
+        self.name = name
+        print(f"State machine created: {name}, state->transactions: {json.dumps(states)} ")
         ...
 
-    def run(self, inputs):
+    def fire_event(self, context: Context) -> State:
+        transaction = self.match_transition(context)
+        if transaction is None:
+            return context.state
+        transaction.action.do(context)
         ...
+
+    def match_transition(self, context: Context):
+        if context.state not in self.states:
+            return None
+        for transaction in self.states[context.state]:
+            if transaction.event == context.event and transaction.condition.satisfied(context):
+                return transaction
+
+        return None
 
     def reset(self):
-        ...
+        self.states.clear()
 
 
 class TransactionBuilder:
