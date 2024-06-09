@@ -41,8 +41,8 @@ class StateMachine:
         self.records = dict()
 
 
-class Event:
-
+class Event(enum.Enum):
+    """子类继承"""
     ...
 
 
@@ -58,7 +58,6 @@ class Context:
         def __init__(self, state, event):
             self.state = state
             self.event = event
-        ...
 
 
 class Action:
@@ -79,7 +78,6 @@ class Condition:
 
     def satisfied(self, ctx: Context):
         ...
-    ...
 
 
 class Transaction:
@@ -100,7 +98,11 @@ class Transaction:
         self.condition = condition
         self.action = action
 
-    ...
+    def event_match(self, ctx: Context):
+        return self.event == ctx.event
+
+    def satisfied(self, ctx: Context):
+        return self.condition.satisfied(ctx)
 
 
 class StateMachine:
@@ -112,20 +114,18 @@ class StateMachine:
         self.states = states
         self.name = name
         print(f"State machine created: {name}, state->transactions: {json.dumps(states)} ")
-        ...
 
     def fire_event(self, context: Context) -> State:
         transaction = self.match_transition(context)
         if transaction is None:
             return context.state
         transaction.action.do(context)
-        ...
 
     def match_transition(self, context: Context):
         if context.state not in self.states:
             return None
         for transaction in self.states[context.state]:
-            if transaction.event == context.event and transaction.condition.satisfied(context):
+            if transaction.event_match(context) and transaction.satisfied(context):
                 return transaction
 
         return None
