@@ -186,15 +186,35 @@ class InternalTransactionBuilder(TransactionBuilder):
     ...
 
 
+class StateMachineFactory:
+
+    def __init__(self):
+        self.state_machines = dict()
+
+    def register(self, name: str, state_machine: StateMachine):
+        self.state_machines[name] = state_machine
+
+    def get(self, name: str):
+        if name not in self.state_machines:
+            raise Exception(f"State machine {name} not found")
+        return self.state_machines.get(name)
+
+    def remove(self, name: str):
+        self.state_machines.pop(name)
+
+
 class StateMachineBuilder:
 
-    def external(self):
+    @staticmethod
+    def external():
         return TransactionBuilder()
 
-    def internal(self):
+    @staticmethod
+    def internal():
         return InternalTransactionBuilder()
 
-    def build(self):
+    def build(self, ):
+
         ...
 
 
