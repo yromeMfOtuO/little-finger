@@ -145,18 +145,23 @@ class InternalTransactionBuilder(TransactionBuilder):
 class StateMachineFactory:
 
     def __init__(self):
-        self.state_machines = dict()
+        ...
 
-    def register(self, name: str, state_machine: StateMachine):
-        self.state_machines[name] = state_machine
+    state_machines = dict()
 
-    def get(self, name: str):
-        if name not in self.state_machines:
+    @staticmethod
+    def register(name: str, state_machine: StateMachine):
+        StateMachineFactory.state_machines[name] = state_machine
+
+    @staticmethod
+    def get(name: str):
+        if name not in StateMachineFactory.state_machines:
             raise Exception(f"State machine {name} not found")
-        return self.state_machines.get(name)
+        return StateMachineFactory.state_machines.get(name)
 
-    def remove(self, name: str):
-        self.state_machines.pop(name)
+    @staticmethod
+    def remove(name: str):
+        StateMachineFactory.state_machines.pop(name)
 
 
 class StateMachineBuilder:
@@ -175,7 +180,7 @@ class StateMachineBuilder:
         assert len(name) > 0
 
         machine = StateMachine(name, self.states)
-        # StateMachineFactory.register(name, machine)
+        StateMachineFactory.register(name, machine)
         return machine
 
 
