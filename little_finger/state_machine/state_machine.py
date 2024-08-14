@@ -1,24 +1,6 @@
-import enum
 import json
 
-
-class Event(enum.Enum):
-    """子类继承"""
-    ...
-
-
-class State(enum.Enum):
-    """
-    子类继承
-    """
-    ...
-
-
-class Context:
-
-        def __init__(self, state, event):
-            self.state = state
-            self.event = event
+from little_finger.state_machine.meta import Context, State, Event
 
 
 class Action:
