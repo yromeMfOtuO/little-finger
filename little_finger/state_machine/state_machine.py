@@ -1,26 +1,7 @@
 import json
 
 from little_finger.state_machine.meta import Context, State, Event
-
-
-class Action:
-
-    def do(self, ctx: Context):
-        """
-        具体的事件处理逻辑
-        需要子类具体实现
-        """
-        ...
-
-
-class Condition:
-    """
-    条件判断, 用于判断是否满足状态转移的条件
-    需要子类具体实现
-    """
-
-    def satisfied(self, ctx: Context):
-        ...
+from little_finger.state_machine.transaction_meta import Condition, Action
 
 
 class Transaction:
