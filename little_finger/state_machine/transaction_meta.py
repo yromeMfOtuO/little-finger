@@ -72,7 +72,3 @@ class Then:
     def then(self, action: Action):
         self.action = action
         return self
-
-
-
-

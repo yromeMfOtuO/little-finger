@@ -1,12 +1,12 @@
 import enum
 
 
-class Event(enum.Enum):
+class Event(str, enum.Enum):
     """子类继承"""
     ...
 
 
-class State(enum.Enum):
+class State(str, enum.Enum):
     """
     子类继承
     """

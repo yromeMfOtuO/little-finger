@@ -1,3 +1,5 @@
+import json
+
 from little_finger.state_machine.state_machine import State, Event
 
 
@@ -6,20 +8,20 @@ class OrderEvent(Event):
     订单事件
     """
 
-    DepositInit = 1
-    DepositUnknown = 2
-    DepositFinished = 3
-    FreezeInit = 4
-    FreezeUnknown = 5
-    FreezeFinished = 6
-    AcceptInit = 7
-    AcceptUnknown = 8
-    AcceptFinished = 9
-    SettleInit = 10
-    SettleUnknown = 11
-    SettleFinished = 12
-    Success = 13
-    Fail = 14
+    DepositInit = 'DepositInit'
+    DepositUnknown = 'DepositUnknown'
+    DepositFinished = 'DepositFinished'
+    FreezeInit = 'FreezeInit'
+    FreezeUnknown = 'FreezeUnknown'
+    FreezeFinished = 'FreezeFinished'
+    AcceptInit = 'AcceptInit'
+    AcceptUnknown = 'AcceptUnknown'
+    AcceptFinished = 'AcceptFinished'
+    SettleInit = 'SettleInit'
+    SettleUnknown = 'SettleUnknown'
+    SettleFinished = 'SettleFinished'
+    Success = 'Success'
+    Fail = 'Fail'
 
 
 class OrderState(State):
@@ -27,13 +29,13 @@ class OrderState(State):
     订单状态
     """
 
-    INIT = 1
-    PENDING_DEPOSIT = 2
-    PENDING_FREEZE = 3
-    PENDING_ACCEPT = 4
-    PENDING_SETTLE = 5
-    SUCCESS = 6
-    FAIL = 7
+    INIT = 'INIT'
+    PENDING_DEPOSIT = 'PENDING_DEPOSIT'
+    PENDING_FREEZE = 'PENDING_FREEZE'
+    PENDING_ACCEPT = 'PENDING_ACCEPT'
+    PENDING_SETTLE = 'PENDING_SETTLE'
+    SUCCESS = 'SUCCESS'
+    FAIL = 'FAIL'
 
 
 class OrderStateMachine:
@@ -47,4 +49,5 @@ class OrderStateMachine:
 
 
 if __name__ == '__main__':
+    print(json.dumps({"state": OrderState.INIT, "event": OrderEvent.DepositInit}))
     ...
