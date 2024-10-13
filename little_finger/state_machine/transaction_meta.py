@@ -72,3 +72,21 @@ class Then:
     def then(self, action: Action):
         self.action = action
         return self
+
+
+class Transaction:
+
+    def __init__(self, from_state: State, to_state: State, event: Event, condition: Condition, action: Action):
+        self.from_state = from_state
+        self.to_state = to_state
+        self.event = event
+        self.condition = condition
+        self.action = action
+
+    def event_match(self, ctx: Context):
+        return self.event == ctx.event
+
+    def satisfied(self, ctx: Context):
+        if self.condition is None:
+            return True
+        return self.condition.satisfied(ctx)
