@@ -20,3 +20,12 @@ def to_decimal_str(value, scale=6):
     :return:
     """
     return str(to_decimal(value, scale))
+
+
+def to_str(num: Decimal) -> str:
+    """
+    decimal to str
+    :param num: decimal
+    :return: str
+    """
+    return format(num, 'f')
