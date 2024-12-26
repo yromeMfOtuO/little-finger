@@ -1,7 +1,7 @@
 """
 数据读写操作，主要包含 csv ， excel
 """
-
+import csv
 import json
 import pandas as pd
 import numpy as np
@@ -93,3 +93,17 @@ def read_data(path: str, **kwargs) -> list:
     return data_frame_2_list(df)
 
 
+def write_data_2_csv(data: list, path: str):
+    with open(path, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+        writer.writeheader()
+        for row in data:
+            writer.writerow(row)
+
+
+if __name__ == '__main__':
+    data = [
+        {"a": 1, "b": 1},
+        {"a": 2, "b": 2},
+    ]
+    write_data_2_csv(data, "./output.csv")
