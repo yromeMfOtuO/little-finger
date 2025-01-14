@@ -3,7 +3,7 @@
 """
 from operator import itemgetter
 from itertools import groupby
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 from typing import Dict
 
@@ -81,7 +81,7 @@ def sort_by(data: list, key_column: str, reverse=True) -> list:
     return data
 
 
-def group_by(data: list, key_column: str) -> Dict[object, list]:
+def group_by(data: list, key_column: str) -> dict[object, list]:
     """
     对 list 依据 key 分组
     :param data: 原始 list
@@ -91,6 +91,20 @@ def group_by(data: list, key_column: str) -> Dict[object, list]:
     sort_by(data, key_column)
     lgb = groupby(data, itemgetter(key_column))
     return {key: list(group) for key, group in lgb}
+
+
+def group_by_key_func(data: list, key_func) -> dict[object, list]:
+    groups = defaultdict(list)
+
+    # 遍历列表中的每个元素
+    for item in data:
+        # 调用函数 b，获取分组的 key
+        key = key_func(item)
+        # 将元素添加到对应的分组中
+        groups[key].append(item)
+
+    # 将 defaultdict 转换为普通字典并返回
+    return dict(groups)
 
 
 def distinct_by(data: list, key_column: str) -> list:
