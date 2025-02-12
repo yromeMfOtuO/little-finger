@@ -49,7 +49,7 @@ def to_dict_by_key_func_value_func(data: list, key_func, value_func) -> dict:
     List 转换成 dict， key 转换成 str
     :param data: 数据列表
     :param key_func: key 生成函数
-    :param key_func: value 生成函数
+    :param value_func: value 生成函数
     :return: str(key) -> datum
     """
     # return {i[key_column]: i for i in data} # 列表展开式实现
