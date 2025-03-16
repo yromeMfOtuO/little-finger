@@ -57,6 +57,17 @@ def get(data: dict, key):
     return get_with_default(data, key)
 
 
+def get_with_func(data: dict, key, value_func):
+    """
+    :param data: source data
+    :param key: key
+    :param value_func: value process func
+    :return: value after func process
+    """
+    value = get_with_default(data, key)
+    return None if value is None else value_func(value)
+
+
 def foreach(data, func):
     """
     :param data: source data
