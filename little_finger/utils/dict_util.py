@@ -80,6 +80,17 @@ def foreach(data, func):
         func(key, value)
 
 
+def map_by(data: dict, key_func, value_func) -> dict:
+    """
+    对字典的键和值进行映射
+    :param data: 字典
+    :param key_func: 键映射函数
+    :param value_func: 值映射函数
+    :return: 映射后的字典
+    """
+    return {key_func(k): value_func(v) for k, v in data.items()}
+
+
 if __name__ == '__main__':
     data_i = {
         "1": "a",
